@@ -1,0 +1,83 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# PyTorch
+*.pth
+*.pt
+!checkpoints/*.pt
+
+# Data files (too large for Git)
+data/dataset/
+!data/coordenadas/
+
+# Logs and temporary files
+logs/*/
+*.log
+*.tmp
+.cache/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Large result files
+evaluation_results/test_predictions*/
+visualization_results/large_outputs/
+*.png
+*.jpg
+*.jpeg
+!sample_landmarks_visualization.png
+!test_sample_visualization.png
+
+# Model artifacts
+models/temp/
+*.onnx
+*.tflite
+
+# Debug files
+debug_*.py
+temp_*.py
+scratch_*.py

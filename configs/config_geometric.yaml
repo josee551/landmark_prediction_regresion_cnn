@@ -1,0 +1,324 @@
+# Configuración optimizada con mejoras geométricas - Fase 1
+# Implementa Wing Loss + análisis geométrico para landmarks anatómicos
+
+# Configuración del modelo
+model:
+  num_landmarks: 15
+  pretrained: true
+  dropout_rate: 0.5
+  freeze_backbone: true  # Para fase 1
+
+  # Nuevas características geométricas
+  use_coordinate_attention: true  # Enable for Phase 2
+  attention_reduction: 32         # Optimal for landmark precision
+  attention_placement: "after_backbone"
+
+# Configuración de datos
+data:
+  batch_size: 8
+  image_size: 224
+  num_workers: 4
+  pin_memory: true
+
+  # Paths de datos
+  coordenadas_path: "data/coordenadas/coordenadas_maestro.csv"
+  dataset_path: "data/dataset"
+
+  # División de datos (mantenemos la exitosa)
+  train_split: 0.7
+  val_split: 0.15
+  test_split: 0.15
+  random_seed: 42
+
+# Configuración de augmentación (optimizada existente)
+augmentation:
+  horizontal_flip: 0.7
+  rotation: 15
+  brightness: 0.4
+  contrast: 0.4
+  color_jitter: 0.1
+  gaussian_blur: 0.1
+
+# Configuración de pérdida (NUEVA - Wing Loss)
+loss:
+  use_geometric: true
+  type: "wing"  # wing, adaptive_wing, complete_landmark
+
+  # Parámetros Wing Loss
+  wing_omega: 10.0
+  wing_epsilon: 2.0
+
+  # Pesos para loss combinado
+  symmetry_weight: 0.3  # Fase 3: Wing Loss + Symmetry Loss
+  distance_weight: 0.0  # Fase 3: solo symmetry, sin distance
+
+  # Para adaptive wing loss (opcional)
+  use_adaptive_wing: false
+  landmark_weights: null
+
+# Configuración de entrenamiento Fase 1
+training_phase1:
+  epochs: 15
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: "adam"
+  scheduler: "step"
+  scheduler_params:
+    step_size: 5
+    gamma: 0.5
+
+  # Early stopping
+  early_stopping:
+    patience: 10
+    min_delta: 0.001
+    monitor: "val_loss"
+
+# Configuración de entrenamiento Fase 2 (Fine-tuning con mejoras)
+training_phase2:
+  epochs: 60  # +5 épocas para convergencia con Wing Loss
+  backbone_lr: 0.00002  # Mantenemos LR exitosos
+  head_lr: 0.0002
+  weight_decay: 0.00005
+  optimizer: "adam"
+  scheduler: "cosine_annealing"
+  min_lr: 0.000002
+
+  # Early stopping más permisivo para fine-tuning
+  early_stopping:
+    patience: 15
+    min_delta: 0.0005
+    monitor: "val_loss"
+
+# Phase 2: Coordinate Attention Configuration
+training_attention:
+  epochs: 65  # More epochs for attention convergence
+  backbone_lr: 0.00001  # More conservative for preserving features
+  attention_lr: 0.0001  # Medium LR for new attention module
+  head_lr: 0.0002      # Maintain successful rate from Phase 1
+  weight_decay: 0.00005
+  optimizer: "adam"
+  scheduler: "cosine_annealing"
+  min_lr: 0.000001     # Lower min LR for better convergence
+
+  # Enhanced early stopping for attention
+  early_stopping:
+    patience: 15
+    min_delta: 0.0005
+    monitor: "val_loss"
+
+# Phase 3: Symmetry Loss Configuration
+training_symmetry:
+  epochs: 70                # More epochs for symmetry convergence
+  backbone_lr: 0.00002      # Maintain successful rate from Phase 2
+  head_lr: 0.0002           # Maintain successful rate from Phase 2
+  weight_decay: 0.00005     # Proven effective value
+  optimizer: "adam"
+  scheduler: "cosine_annealing"
+  min_lr: 0.000002          # Conservative minimum LR
+
+  # Early stopping for symmetry training
+  early_stopping:
+    patience: 15
+    min_delta: 0.0005
+    monitor: "val_loss"
+
+# Configuración de logging y métricas
+logging:
+  log_dir: "logs"
+  experiment_name: "geometric_symmetry_phase3"
+  log_interval: 10
+  save_top_k: 3
+  log_attention_weights: true
+  attention_visualization_interval: 10
+  log_detailed_metrics: true
+
+  # Logging geométrico
+  log_geometric_metrics: true
+  geometric_validation_interval: 5  # Cada 5 épocas
+
+# Configuración de evaluación
+evaluation:
+  metrics:
+    # Métricas estándar
+    - "rmse"
+    - "mae"
+    - "pixel_error"
+
+    # Métricas geométricas nuevas
+    - "symmetry_consistency"
+    - "anatomical_validity"
+    - "constraint_violations"
+    - "cardiothoracic_ratio"
+    - "distance_preservation"
+
+  # Validación geométrica
+  geometric_validation:
+    enabled: true
+    validity_threshold: 0.7
+
+  # Conversión a píxeles para métricas
+  image_size_for_pixels: 224
+
+# Configuración de checkpoints
+checkpoints:
+  save_dir: "checkpoints"
+  save_best: true
+  save_latest: true
+
+  # Nomenclatura para experimentos geométricos
+  phase1_name: "geometric_phase1_wing_loss.pt"
+  phase2_name: "geometric_phase2_complete.pt"
+  attention_name: "geometric_attention.pt"
+  load_from_phase1: "geometric_phase2_wing_loss.pt"
+
+# Configuración de dispositivo
+device:
+  use_gpu: true
+  gpu_id: 0
+  mixed_precision: false  # Mantener false para estabilidad inicial
+
+# Configuración de reproducibilidad
+reproducibility:
+  seed: 42
+  deterministic: true
+  benchmark: false  # Para resultados reproducibles
+
+# Configuración específica de análisis geométrico
+geometric_analysis:
+  # Pares simétricos para análisis bilateral
+  symmetric_pairs:
+    - [2, 3]   # Ápices pulmonares
+    - [4, 5]   # Hilios
+    - [6, 7]   # Bases pulmonares
+    - [11, 12] # Bordes superiores
+    - [13, 14] # Senos costofrénicos
+
+  # Landmarks del eje mediastinal
+  mediastinal_landmarks: [0, 1, 8, 9, 10]
+
+  # Distancias críticas para preservación
+  critical_distances:
+    - [0, 1]   # Mediastino superior-inferior
+    - [8, 9]   # Eje central medio
+    - [2, 3]   # Ancho torácico superior
+    - [4, 5]   # Ancho torácico medio
+    - [6, 7]   # Ancho torácico inferior
+
+  # Umbrales para validación anatómica
+  thresholds:
+    symmetry_tolerance: 0.15
+    mediastinal_deviation_max: 0.1
+    vertical_order_violation_max: 0.05
+
+  # Pesos por importancia anatómica (para Adaptive Wing Loss)
+  landmark_importance_weights:
+    - 1.5  # 0: Mediastino superior (crítico)
+    - 1.5  # 1: Mediastino inferior (crítico)
+    - 1.2  # 2: Ápice izquierdo
+    - 1.2  # 3: Ápice derecho
+    - 1.3  # 4: Hilio izquierdo (importante)
+    - 1.3  # 5: Hilio derecho (importante)
+    - 1.1  # 6: Base izquierda
+    - 1.1  # 7: Base derecha
+    - 1.5  # 8: Centro medio (crítico)
+    - 1.4  # 9: Centro inferior
+    - 1.4  # 10: Centro superior
+    - 1.0  # 11: Borde izquierdo
+    - 1.0  # 12: Borde derecho
+    - 2.0  # 13: Problema conocido (peso alto)
+    - 2.0  # 14: Problema conocido (peso alto)
+
+# Configuración de experimentos por fases
+phases:
+  phase1:
+    name: "Wing Loss Baseline"
+    description: "Implementación de Wing Loss para precision sub-pixel"
+    expected_improvement: "11.34px → 10.91px"
+    config_overrides:
+      loss:
+        type: "wing"
+        symmetry_weight: 0.0
+        distance_weight: 0.0
+      training_phase2:
+        epochs: 55  # Mantenemos épocas base exitosas
+
+  phase2:
+    name: "Coordinate Attention Integration"
+    description: "Spatial attention for improved landmark localization"
+    expected_improvement: "10.91px → 9.8px"
+    checkpoint_base: "checkpoints/geometric_phase2_wing_loss.pt"
+    checkpoint_target: "checkpoints/geometric_attention.pt"
+    config_overrides:
+      model:
+        use_coordinate_attention: true
+      training_attention:
+        epochs: 65
+        backbone_lr: 0.00001
+        attention_lr: 0.0001
+
+  phase3:
+    name: "Symmetry-Aware Loss"
+    description: "Wing Loss + bilateral symmetry constraints"
+    expected_improvement: "10.91px → 9.3px"
+    checkpoint_base: "checkpoints/geometric_phase2_wing_loss.pt"
+    checkpoint_target: "checkpoints/geometric_symmetry.pt"
+    config_overrides:
+      loss:
+        type: "wing"
+        symmetry_weight: 0.3
+        distance_weight: 0.0
+      training_symmetry:
+        epochs: 70
+
+  phase4:
+    name: "Complete Geometric Loss"
+    description: "Loss completo con todos los componentes"
+    expected_improvement: "9.3px → 8.5-9.0px"
+    config_overrides:
+      loss:
+        type: "complete_landmark"
+        symmetry_weight: 0.3
+        distance_weight: 0.2
+      training_phase2:
+        epochs: 70
+
+# Configuración de validación y testing
+validation:
+  # Validación estándar
+  interval: 1
+  metrics_to_track:
+    - "val_loss"
+    - "val_pixel_error_mean"
+    - "val_symmetry_consistency"
+    - "val_anatomical_validity"
+
+  # Visualización de resultados
+  visualize_predictions: true
+  visualize_interval: 10
+  max_visualizations: 8
+
+# Configuración de testing final
+testing:
+  # Métricas de comparación con baseline
+  baseline_comparison: true
+  baseline_error: 11.34  # Error actual a superar
+  target_error: 10.0     # Objetivo clínico
+
+  # Análisis detallado por categoría
+  category_analysis: true
+  categories: ["COVID", "Normal", "Viral Pneumonia"]
+
+  # Análisis por landmark individual
+  landmark_analysis: true
+  problematic_landmarks: [13, 14]  # Landmarks más difíciles
+
+  # Validación geométrica exhaustiva
+  geometric_validation:
+    comprehensive: true
+    generate_reports: true
+    save_detailed_analysis: true
+
+  # Baseline and target error values for Phase 2
+  baseline_error_phase1: 11.34  # Original baseline
+  baseline_error_phase2: 10.91  # Phase 1 result with Wing Loss
+  target_error_phase2: 9.8      # Phase 2 target with attention

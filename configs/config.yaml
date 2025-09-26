@@ -1,0 +1,89 @@
+# Configuración para el proyecto de regresión de landmarks con ResNet-18
+
+# Rutas de datos
+data:
+  root_dir: "data"
+  images_dir: "data/dataset"
+  annotations_file: "data/coordenadas/coordenadas_maestro.csv"
+
+# División del dataset
+split:
+  train_ratio: 0.7
+  val_ratio: 0.15
+  test_ratio: 0.15
+  random_seed: 42
+
+# Configuración de imágenes
+image:
+  input_size: [224, 224]  # Tamaño estándar para ResNet
+  channels: 3
+  normalize_coords: true  # Normalizar coordenadas entre 0-1
+
+# Configuración del modelo
+model:
+  backbone: "resnet18"
+  pretrained: true
+  num_landmarks: 15
+  num_coords: 30  # 15 landmarks * 2 coordenadas (x,y)
+  freeze_backbone: true  # Para Fase 1
+
+# Configuración de entrenamiento Fase 1 (solo cabeza)
+training_phase1:
+  batch_size: 32
+  epochs: 2
+  learning_rate: 0.001
+  weight_decay: 0.0001
+  optimizer: "adam"
+  scheduler: "step_lr"
+  step_size: 5
+  gamma: 0.1
+
+# Configuración de entrenamiento Fase 2 (fine-tuning)
+training_phase2:
+  batch_size: 8
+  epochs: 55
+  backbone_lr: 0.00002    # Learning rate bajo para backbone
+  head_lr: 0.0002        # Learning rate más alto para cabeza
+  weight_decay: 0.00005
+  optimizer: "adam"
+  scheduler: "cosine_annealing"
+  min_lr: 0.000002
+
+# Data augmentation
+augmentation:
+  horizontal_flip: 0.7
+  rotation: 15  # grados
+  brightness: 0.4
+  contrast: 0.4
+
+# GPU y entrenamiento
+device:
+  use_gpu: true
+  gpu_id: 0
+  num_workers: 4
+  pin_memory: true
+
+# Logging y checkpoints
+logging:
+  log_dir: "logs"
+  checkpoint_dir: "checkpoints"
+  save_every: 5  # Guardar cada 5 épocas
+  tensorboard: true
+
+# Early stopping
+early_stopping:
+  patience: 10
+  min_delta: 0.0001
+  monitor: "val_loss"
+
+# Función de pérdida
+loss:
+  type: "mse"  # Mean Squared Error
+  reduction: "mean"
+
+# Configuración de Ensemble Learning
+ensemble:
+  num_models: 5
+  random_seeds: [42, 123, 456, 789, 999]
+  aggregation_method: "mean"  # mean, weighted_mean, median
+  diversity_strategy: "random_seed"  # random_seed para bootstrap aggregating
