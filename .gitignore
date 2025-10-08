@@ -33,11 +33,15 @@ env/
 # PyTorch
 *.pth
 *.pt
-!checkpoints/*.pt
 
-# Data files (too large for Git)
-data/dataset/
-!data/coordenadas/
+# Checkpoints (too large for Git - 7.3GB)
+checkpoints/
+
+# Data files (too large for Git - 38MB)
+data/
+
+# Deprecated experiments (too large for Git - 1.1GB)
+deprecated/
 
 # Logs and temporary files
 logs/*/
