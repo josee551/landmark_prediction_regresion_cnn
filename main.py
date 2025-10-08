@@ -286,7 +286,7 @@ print(f"📁 Ubicación: {output_dir}")
             print("🔍 Detectado modelo estándar - usando evaluación estándar")
             # Para modelos estándar, usar evaluate script
             result = os.system(f"python -c \"import sys; sys.path.append('.'); "
-                             f"exec(open('evaluate_symmetry.py').read().replace('geometric_symmetry.pt', '{checkpoint_path}'))\"")
+                             f"exec(open('scripts/evaluation/evaluate_symmetry.py').read().replace('geometric_symmetry.pt', '{checkpoint_path}'))\"")
 
         if result == 0:
             print("✅ Visualizaciones completas generadas!")
@@ -319,7 +319,7 @@ def visualize_test_complete_loss():
 
     # Ejecutar script de visualización
     try:
-        result = os.system("python visualize_complete_test.py")
+        result = os.system("python scripts/visualization/visualize_complete_test.py")
 
         if result == 0:
             print("✅ Visualizaciones Complete Loss generadas exitosamente!")
@@ -483,7 +483,7 @@ def train_geometric_final():
     print(f"✓ Modelo base encontrado: {base_checkpoint}")
 
     # Ejecutar entrenamiento Phase 4
-    result = os.system("python train_complete_simple.py")
+    result = os.system("python scripts/training/train_complete_simple.py")
 
     if result == 0:
         print("✅ Phase 4 completado exitosamente")
